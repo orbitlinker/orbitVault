@@ -1,9 +1,10 @@
+import Email from '../email/Email'
 import { HomeContainer } from './style'
-import Sidebar from '../sideBar/Sidebar'
 const Home = () => {
     return (
         <HomeContainer>
-            <Sidebar />
+            {/* <Sidebar /> */}
+            <Email />
         </HomeContainer>
     )
 }

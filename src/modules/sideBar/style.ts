@@ -50,14 +50,14 @@ export const ListContainer = styled.div`
     }
     li{
         font-family: "Nunito", sans-serif;
-        text-transform: uppercase;
-        font-size: 14px;
+        text-transform: capitalize;
+        font-size: 16px;
     }
     .listHandler{
         transition: 250ms;
         display: flex;
         gap: 1.5rem;
-        color: #8392a5;
+        color:rgb(117, 131, 150);
         align-items: center;
         padding: 16px 20px;
         border-radius: 10px;
