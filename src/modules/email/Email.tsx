@@ -18,22 +18,64 @@ const Email = () => {
     };
 
     const submitHandler = () => {
-        setHandlePostLoader(true)
-        console.log(handlePostLoader);
+        setHandlePostLoader(true);
 
-        const emailArray = emailForm.emailIds
+        const { subject, emailIds, message } = emailForm;
+
+        if (!subject.trim()) {
+            toast.error("Subject is required!");
+            setHandlePostLoader(false);
+            return;
+        }
+
+        if (!emailIds.trim()) {
+            toast.error("At least one email ID is required!");
+            setHandlePostLoader(false);
+            return;
+        }
+
+        if (!message.trim()) {
+            toast.error("Message is required!");
+            setHandlePostLoader(false);
+            return;
+        }
+
+        const emailArray = emailIds
             .split(',')
             .map(email => email.trim())
             .filter(email => email.length > 0);
 
+        const invalidEmails = emailArray.filter(email =>
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+        );
+
+        if (invalidEmails.length > 0) {
+            toast.error(`Invalid email(s): ${invalidEmails.join(', ')}`);
+            setHandlePostLoader(false);
+            return;
+        }
+
         const finalPayload = {
-            subject: emailForm.subject,
+            subject: subject.trim(),
             emailIds: emailArray,
-            message: emailForm.message
+            message: message.trim()
         };
-        toast("Wow so easy!")
-        console.log('Sending email with payload:', finalPayload);
+        setTimeout(() => {
+            toast.success("Email sent successfully!");
+            console.log('Sending email with payload:', finalPayload);
+            setHandlePostLoader(false);
+            reset();
+        }, 2000);
     };
+
+    const reset = () => {
+        setEmailForm({
+            subject: '',
+            emailIds: '',
+            message: ''
+        })
+    }
+
 
     return (
         <EmailContainer>
