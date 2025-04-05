@@ -34,7 +34,6 @@ export const EmailWrapper = styled.section`
         background: #04AA6D;
         color: #fff;
         border-radius: 10px;
-        margin: 20px auto;
         width: 120px;
         transition: 250ms;
     }
@@ -60,4 +59,11 @@ export const FormWrapper = styled.div`
         font-size: 14px;
         background: #ecedeeb3;
     }
+`
+export const ButtonWrapper = styled.div`
+    margin: 20px auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `
