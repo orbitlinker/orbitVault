@@ -15,9 +15,9 @@ export const EmailContainer = styled.section`
 `
 
 export const EmailWrapper = styled.section`
-    margin: 2rem auto;
+    margin: 0rem auto;
     width: 80%;
-    padding: 2rem 4rem;
+    padding: 1rem 4rem;
     background: #fff;
     border-radius: 10px;
     box-shadow: 1px 1px 10px rgba(131, 146, 165, 0.23);

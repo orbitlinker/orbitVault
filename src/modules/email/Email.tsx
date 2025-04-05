@@ -1,15 +1,19 @@
-import { EmailContainer, FormWrapper, EmailWrapper, ButtonWrapper } from './style'
+import {
+    EmailContainer,
+    FormWrapper,
+    EmailWrapper,
+    ButtonWrapper
+} from './style';
 import { HeadingWrapper } from '../common/Styles/testStyles';
 import { IoSendSharp } from "react-icons/io5";
 import { useState } from 'react';
 import ButtonPostLoader from '../common/Components/buttonPostLoader/ButtonPostLoader';
 import { toast } from 'react-toastify';
+import { apiRequest } from './Services/getAPIRequest';
+import { EmailForm, EmailFormHandler } from './utils/EmailFormHandler';
+
 const Email = () => {
-    const [emailForm, setEmailForm] = useState({
-        subject: '',
-        emailIds: '',
-        message: ''
-    });
+    const [emailForm, setEmailForm] = useState<EmailForm>(EmailFormHandler.getInitialForm());
     const [handlePostLoader, setHandlePostLoader] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -17,65 +21,44 @@ const Email = () => {
         setEmailForm(prev => ({ ...prev, [name]: value }));
     };
 
+    const resetForm = () => setEmailForm(EmailFormHandler.getInitialForm());
+
     const submitHandler = () => {
         setHandlePostLoader(true);
+        const handler = new EmailFormHandler(emailForm);
+        const result = handler.validate();
 
-        const { subject, emailIds, message } = emailForm;
-
-        if (!subject.trim()) {
-            toast.error("Subject is required!");
-            setHandlePostLoader(false);
-            return;
-        }
-
-        if (!emailIds.trim()) {
-            toast.error("At least one email ID is required!");
-            setHandlePostLoader(false);
-            return;
-        }
-
-        if (!message.trim()) {
-            toast.error("Message is required!");
-            setHandlePostLoader(false);
-            return;
-        }
-
-        const emailArray = emailIds
-            .split(',')
-            .map(email => email.trim())
-            .filter(email => email.length > 0);
-
-        const invalidEmails = emailArray.filter(email =>
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-        );
-
-        if (invalidEmails.length > 0) {
-            toast.error(`Invalid email(s): ${invalidEmails.join(', ')}`);
+        if (!result.valid) {
+            toast.error(result.error || "Invalid form data");
             setHandlePostLoader(false);
             return;
         }
 
         const finalPayload = {
-            subject: subject.trim(),
-            emailIds: emailArray,
-            message: message.trim()
+            subject: emailForm.subject.trim(),
+            emailIds: result.emailArray!,
+            message: emailForm.message.trim(),
+            organisation: "orbitlinker"
         };
-        setTimeout(() => {
-            toast.success("Email sent successfully!");
-            console.log('Sending email with payload:', finalPayload);
-            setHandlePostLoader(false);
-            reset();
-        }, 2000);
+
+        apiRequest(
+            {
+                endpoint: "/v1/email/bulk",
+                method: "POST",
+                data: finalPayload,
+                type: "json"
+            },
+            (err, res) => {
+                setHandlePostLoader(false);
+                if (res) {
+                    toast.success("Email sent successfully!");
+                    resetForm();
+                } else {
+                    toast.error(err?.message || "Something went wrong!");
+                }
+            }
+        );
     };
-
-    const reset = () => {
-        setEmailForm({
-            subject: '',
-            emailIds: '',
-            message: ''
-        })
-    }
-
 
     return (
         <EmailContainer>
@@ -106,15 +89,13 @@ const Email = () => {
                     />
                 </FormWrapper>
                 <ButtonWrapper>
-                    {
-                        !handlePostLoader ? (
-                            <button onClick={submitHandler}>
-                                Send <IoSendSharp />
-                            </button>
-                        ) : (
-                            <ButtonPostLoader styles={{ padding: '20px 0' }} />
-                        )
-                    }
+                    {handlePostLoader ? (
+                        <ButtonPostLoader styles={{ padding: '20px 0' }} />
+                    ) : (
+                        <button onClick={submitHandler}>
+                            Send <IoSendSharp />
+                        </button>
+                    )}
                 </ButtonWrapper>
             </EmailWrapper>
         </EmailContainer>
