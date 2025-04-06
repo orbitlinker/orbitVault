@@ -1,7 +1,7 @@
 // TestEditor.tsx
 import { TextEditorContainer } from './style';
 import JoditEditor from 'jodit-react';
-import React, { useRef, useMemo } from 'react';
+import { useRef, useMemo } from 'react';
 
 const TestEditor = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
     const editor = useRef(null);
