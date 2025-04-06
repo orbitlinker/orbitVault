@@ -11,6 +11,7 @@ import ButtonPostLoader from '../common/Components/buttonPostLoader/ButtonPostLo
 import { toast } from 'react-toastify';
 import { apiRequest } from './Services/getAPIRequest';
 import { EmailForm, EmailFormHandler } from './utils/EmailFormHandler';
+import TestEditor from '../common/Components/TextEditor/TestEditor';
 
 const Email = () => {
     const [emailForm, setEmailForm] = useState<EmailForm>(EmailFormHandler.getInitialForm());
@@ -40,6 +41,8 @@ const Email = () => {
             message: emailForm.message.trim(),
             organisation: "orbitlinker"
         };
+        // console.log(finalPayload);
+
 
         apiRequest(
             {
@@ -79,13 +82,20 @@ const Email = () => {
                         onChange={handleInputChange}
                         placeholder="Enter all email IDs, separated by commas."
                     />
-                    <textarea
+                    {/* <textarea
                         name="message"
                         rows={10}
                         value={emailForm.message}
                         onChange={handleInputChange}
                         style={{ resize: 'none' }}
                         placeholder="Enter your message here"
+                    /> */}
+                    <TestEditor
+                        value={emailForm.message}
+                        onChange={(newContent: string) => setEmailForm(prev => ({
+                            ...prev,
+                            message: newContent
+                        }))}
                     />
                 </FormWrapper>
                 <ButtonWrapper>

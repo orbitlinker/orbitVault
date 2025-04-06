@@ -3,7 +3,6 @@ import { HomeContainer } from './style'
 const Home = () => {
     return (
         <HomeContainer>
-            {/* <Sidebar /> */}
             <Email />
         </HomeContainer>
     )
